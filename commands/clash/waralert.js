@@ -1,9 +1,7 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { CLASH_TOKEN, CLAN_TAG } = require('../../config/config.json');
 const { users } = require('../../data/users.json');
 const cocclient = require('clash-of-clans-node');
-const { EmbedBuilder } = require('discord.js');
-
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,63 +10,63 @@ module.exports = {
 
     async execute(interaction) {
         try {
-            const clanWarRole = await interaction.guild.roles.fetch('1184837841029709966');
+            const clanWarRole = interaction.guild.roles.cache.get('1184837841029709966') || await interaction.guild.roles.fetch('1184837841029709966');
             const clanTagRegex = /^#([A-Z0-9]{3,10})$/;
             await cocclient.login(CLASH_TOKEN);
 
             const currentWar = await cocclient.getClanCurrentWar(CLAN_TAG, "Coc client logged in");
 
-            if (currentWar.state === 'preparation') {
-                // Embed for preparation phase
-                const preparationEmbed = new EmbedBuilder()
-                    .setTitle(`${currentWar.clan.name} vs ${currentWar.opponent.name}`)
-                    .setThumbnail(currentWar.clan.badgeUrls.medium)
-                    .setImage(currentWar.opponent.badgeUrls.medium)
-                    .addFields({ name: `Start time`, value: `${convertTime(currentWar.startTime)}`, inline: true })
-                    .addFields({ name: `End time`, value: `${convertTime(currentWar.endTime)}`, inline: true })
-                    .setColor('#FF0000');
-
-                await interaction.reply({ embeds: [preparationEmbed] });
-            } else if (currentWar.state === 'inWar') {
-
-                // Embed for ongoing war
-                const ongoingWarEmbed = new EmbedBuilder()
-                    .setTitle(`${currentWar.clan.name} vs ${currentWar.opponent.name}`)
-                    .setThumbnail(currentWar.clan.badgeUrls.medium)
-                    .setImage(currentWar.opponent.badgeUrls.medium)
-                    .addFields({ name: `Start time`, value: `${convertTime(currentWar.startTime)}`, inline: true })
-                    .addFields({ name: `End time`, value: `${convertTime(currentWar.endTime)}`, inline: true })
-                    .addFields({ name: "\n", value: "\n"})
-                    .addFields({ name: "\n", value: "\n"})
-                    .setColor('#FF0000');
-                    
-
-                // Iterate over each member in the current war and check for users
-                for (const member of currentWar.clan.members) {
-                    for (const user of users) {
-                        if (user.clashTags.includes(member.tag)) {
-                            // Fetch the GuildMember object for the user
-                            let guildMember = await interaction.guild.members.fetch(user.discordId);
-                            // Assign the war role to the user
-                            await guildMember.roles.add(clanWarRole);
-                            ongoingWarEmbed.addFields({ name: `User Tag: ${member.tag}`, value: `Role assigned to ${guildMember.user.username}`});
-                        }
-                    }
-                }
-
-                await interaction.reply({ content: `Hello <@&${clanWarRole.id}> There is a war going on`, embeds: [ongoingWarEmbed] });
-            } else {
+            if (!(currentWar.state === 'preparation' || currentWar.state === 'inWar')) {
                 // Embed for no active war
                 const noWarEmbed = new EmbedBuilder()
                     .setTitle(`No Active War - ${currentWar.clan.name}`)
                     .setColor('#008000'); // Green color
 
                 await interaction.reply({ embeds: [noWarEmbed] });
+                return;
+            }
+
+            await interaction.deferReply();
+
+            const embedTitle = currentWar.state === 'preparation' ? 'Preparation Phase' : 'Ongoing War';
+            const embedColor = currentWar.state === 'preparation' ? '#0000FF': '#FF0000';
+
+            const embed = new EmbedBuilder()
+                .setTitle(`${embedTitle}: ${currentWar.clan.name} vs ${currentWar.opponent.name}`)
+                .setThumbnail(currentWar.clan.badgeUrls.medium)
+                .setImage(currentWar.opponent.badgeUrls.medium)
+                .addFields(
+                    { name: `Start time`, value: `${convertTime(currentWar.startTime)}`, inline: true },
+                    { name: `End time`, value: `${convertTime(currentWar.endTime)}`, inline: true },
+                    { name: 'Players', value: `${currentWar.clan.members.length} vs ${currentWar.clan.members.length}` },
+                )
+                .setColor(embedColor);
+
+            let membersToAddRole = [];
+
+            for (const member of currentWar.clan.members) {
+                for (const user of users) {
+                    if (user.clashTags.includes(member.tag)) {
+                        const guildMember = await interaction.guild.members.fetch(user.discordId);
+                        membersToAddRole.push(guildMember);
+    
+                        embed.addFields({ name: `${member.name} - ${member.tag}`, value: `added clan war role`, inline: true });
+                    }
+                }
+            }
+
+            // Assign roles in bulk
+            await Promise.all(membersToAddRole.map(member => member.roles.add(clanWarRole)));
+
+            if (currentWar.state === "inWar") {
+                await interaction.editReply({ content: `<@&${clanwarRole.id}>`, embeds: [embed] });
+            } else {
+                await interaction.editReply({ embeds: [embed] });
             }
         } catch (error) {
             console.error('Error fetching current clan war:', error);
             // Reply with an error message
-            await interaction.reply('An error occurred while fetching current clan war.');
+            await interaction.reply('An error occurred while fetching the current clan war.');
         }
     },
 };

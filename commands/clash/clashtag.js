@@ -99,20 +99,23 @@ module.exports = {
             switch (player.role) {
                 case 'leader':
                     guildMember.roles.add(leaderRole);
+                    await interaction.reply(`Welcome Leader ${player.name} - ${player.tag}`);
                     break;
                 case 'coLeader':
-                    await interaction.reply(`Co Leader added to ${guildMember.user.username}`);
+                    await interaction.reply(`Welcome Co-Leader ${player.name} - ${player.tag}`);
                     guildMember.roles.add(coLeaderRole);
                     return;
                 case 'admin':
                     guildMember.roles.add(elderRole);
+                    await interaction.reply(`Welcome Elder ${player.name} - ${player.tag}`);
                     break;
                 default:
                     guildMember.roles.add(memberRole);
+                    await interaction.reply(`Welcome Member ${player.name} - ${player.tag}`);
                     break;
             }
 
-            await interaction.reply(`${player.role} added to ${guildMember.user.username}`);
+            
         } catch (error) {
             console.error('Error:', error);
             await interaction.reply(`An error occurred while processing the Clash Tag.`);
