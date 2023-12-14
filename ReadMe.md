@@ -1,75 +1,60 @@
-# Project Name
+# ClashBot - Clash of Clans Discord Bot
 
-Short project description.
+![Project Logo/Icon]
 
-## Table of Contents
+ClashBot is a Discord bot designed for the Chungus FC clan, providing Clash of Clans-related functionalities within the Discord server. The bot integrates with the Clash of Clans API using clash-of-clans-node and utilizes Discord.js for handling Discord interactions.
 
-- About
-- Features
-- Getting Started
-    - Prerequisites
-    - Installation
-- Usage
-- Contributing
-- License
-- Acknowledgments
+## Features
 
-## About
+- Clash of Clans Integration: Fetches information from the Clash of Clans API to provide updates on clan wars, player stats, and more.
+- Role Management: Allows users to associate their Clash of Clans tag with their Discord account and assigns roles based on their in-game roles.
 
-Briefly describe the purpose and goals of your project. Mention any key features or functionalities.
-Features
+## Requirements
 
-Highlight the main features of your project. You can use bullet points for a clear and concise overview.
+- Node.js (version X.X.X)
+- Discord.js (version ^14.14.1)
+- Clash of Clans Node API (version ^1.1.4)
 
-- Link Discord ID's to Clash of Clans Tags
-- Give Roles Based on Clan Roles
-- Ping Users in ongoing wars
+## Installation
 
-## Getting Started
-
-Provide instructions on how to get the project up and running on a local machine.
-
-### Prerequisites
-
-Having Node.js installed
-Having NPM
-
-### Installation
-
-Step-by-step guide on how to install and set up the project.
+1. Clone the repository:
 
 ```bash
+git clone https://github.com/your-username/clashbot.git
+```
 
-# Clone the repository
-git clone https://github.com/ArloFilley/ClashBot.git
+2. Install dependencies:
 
-# Navigate to the project directory
-cd ClashBot
-
-# Install dependencies
+```bash
 npm install
 ```
 
-## Usage
+3. Set up your Discord bot token and Clash of Clans API token in the config.json file.
 
-Explain how to use the project or include examples of usage.
+4. Run the bot:
 
 ```bash
-
-# Command 1
-node deploy.js
-
-# Command 2
-node .
+node index.js
 ```
+
+## Configuration
+
+Discord Token: Obtain your Discord bot token from the Discord Developer Portal.
+Clash of Clans API Token: Get your Clash of Clans API token from the Clash of Clans Developer API.
+
+## Usage
+
+Invite the bot to your Discord server.
+Use the /clashtag command in the designated welcome channel to associate your Clash of Clans tag with your Discord account.
 
 ## Contributing
 
-Explain how others can contribute to your project. Include information about submitting issues, pull requests, and any guidelines for contributors.
+Feel free to contribute to this project by opening issues or submitting pull requests. Make sure to follow the contributing guidelines.
 License
 
-This project is licensed under the [License Name] - see the LICENSE.md file for details.
+This project is licensed under the ISC License.
 
-## Acknowledgments
+## Acknowledgements
 
-Mention any contributors, libraries, or resources that inspired or helped with the project.
+- Discord.js: A powerful library for interacting with the Discord API.
+- Clash of Clans Node API: A Node.js wrapper for the Clash of Clans API.
