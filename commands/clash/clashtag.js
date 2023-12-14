@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { CLASH_TOKEN, CLAN_TAG } = require('../../config/config.json');
-const { MemberRoleID, ElderRoleID, CoLeaderRoleID, LeaderRoleID } = require('../../config/config.json');
+const { Roles } = require('../../config/config.json');
 const fs = require('fs');
 
 module.exports = {
@@ -10,13 +10,22 @@ module.exports = {
             .setDescription('Your Clash Tag')
             .setRequired(true),
         )
+        .addUserOption(option => option.setName('user')
+            .setDescription('user who\'s account it is')
+        )
         .setDescription('Awesome Sauce!'),
 
     async execute(interaction) {
-        const memberRole = await interaction.guild.roles.fetch(MemberRoleID);
-        const elderRole = await interaction.guild.roles.fetch(ElderRoleID);
-        const coLeaderRole = await interaction.guild.roles.fetch(CoLeaderRoleID);
-        const leaderRole = await interaction.guild.roles.fetch(LeaderRoleID);
+        const memberRole = await interaction.guild.roles.fetch(Roles.MemberRoleID);
+        const elderRole = await interaction.guild.roles.fetch(Roles.ElderRoleID);
+        const coLeaderRole = await interaction.guild.roles.fetch(Roles.CoLeaderRoleID);
+        const leaderRole = await interaction.guild.roles.fetch(Roles.LeaderRoleID);
+
+        let userID = interaction.user.id;
+
+        if (interaction.options.getUser('user')) {
+            userID = interaction.options.getUser('user').id;
+        }
 
         const clanTagRegex = /^#([A-Z0-9]{3,10})$/;
 
@@ -41,15 +50,17 @@ module.exports = {
             console.log(`${player.tag} is a valid Clash Tag`);
 
             const clan = await cocclient.getClan(CLAN_TAG);
-            console.log(`${interaction.user.id} -> ${player.tag}`);
+            console.log(`${userID} -> ${player.tag}`);
 
-            const guildMember = await interaction.guild.members.fetch(interaction.user.id);
+            const guildMember = await interaction.guild.members.fetch(userID);
 
             // Update user nickname
-            // await guildMember.setNickname(`${player.name} - ${player.tag}`);
+            if (guildMember.user.id !== '674317125602508801') {
+                await guildMember.setNickname(`${player.name} - ${player.tag}`);
+            }
 
             // Read existing user data
-            const userData = fs.readFileSync('users.json', 'utf8');
+            const userData = fs.readFileSync('./data/users.json', 'utf8');
             let users = [];
             if (userData) {
                 users = JSON.parse(userData);
@@ -58,7 +69,7 @@ module.exports = {
             let existingUser = false;
             // Check if the user already exists
             for (const user of users.users) {
-                if (user.discordId === interaction.user.id) {
+                if (user.discordId === userID) {
                     existingUser = true;
                     if (!user.clashTags.includes(player.tag)) {
                         // Add the Clash Tag and username to the existing user
@@ -66,7 +77,7 @@ module.exports = {
                         user.clashUsernames.push(player.name);
     
                         // Write updated user data
-                        fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
+                        fs.writeFileSync('./data/users.json', JSON.stringify(users, null, 2));
                     }
                 }
             }
@@ -76,12 +87,12 @@ module.exports = {
                 const userInfo = {
                     clashTags: [player.tag],
                     clashUsernames: [player.name],
-                    discordId: interaction.user.id,
+                    discordId: userID,
                 };
-                users.push(userInfo);
+                users.users.push(userInfo);
 
                 // Write updated user data
-                fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
+                fs.writeFileSync('./data/users.json', JSON.stringify(users, null, 2));
             }
 
             // Role assignment based on the player's role in the clan
@@ -90,7 +101,7 @@ module.exports = {
                     guildMember.roles.add(leaderRole);
                     break;
                 case 'coLeader':
-                    await interaction.reply(`Co Leader added to ${interaction.user.username}`);
+                    await interaction.reply(`Co Leader added to ${guildMember.user.username}`);
                     guildMember.roles.add(coLeaderRole);
                     return;
                 case 'admin':
@@ -101,10 +112,11 @@ module.exports = {
                     break;
             }
 
-            await interaction.reply(`${player.role} added to ${interaction.user.username}`);
+            await interaction.reply(`${player.role} added to ${guildMember.user.username}`);
         } catch (error) {
             console.error('Error:', error);
             await interaction.reply(`An error occurred while processing the Clash Tag.`);
         }
     },
 };
+

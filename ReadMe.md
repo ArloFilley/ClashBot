@@ -57,7 +57,7 @@ Explain how to use the project or include examples of usage.
 ```bash
 
 # Command 1
-node delpoy.js
+node deploy.js
 
 # Command 2
 node .
