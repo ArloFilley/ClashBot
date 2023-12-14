@@ -23,6 +23,7 @@ Highlight the main features of your project. You can use bullet points for a cle
 
 - Link Discord ID's to Clash of Clans Tags
 - Give Roles Based on Clan Roles
+- Ping Users in ongoing wars
 
 ## Getting Started
 
