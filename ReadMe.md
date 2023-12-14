@@ -1,6 +1,6 @@
 # ClashBot - Clash of Clans Discord Bot
 
-![Project Logo/Icon]
+![Project Logo/Icon](https://api-assets.clashofclans.com/badges/512/CjBdRm0ajZlMZyJy9WuAIgzFc1J37bvpgwguwcxRKbg.png)
 
 ClashBot is a Discord bot designed for the Chungus FC clan, providing Clash of Clans-related functionalities within the Discord server. The bot integrates with the Clash of Clans API using clash-of-clans-node and utilizes Discord.js for handling Discord interactions.
 
