@@ -21,9 +21,8 @@ Features
 
 Highlight the main features of your project. You can use bullet points for a clear and concise overview.
 
-    Feature 1
-    Feature 2
-    Feature 3
+- Link Discord ID's to Clash of Clans Tags
+- Give Roles Based on Clan Roles
 
 ## Getting Started
 
@@ -33,7 +32,6 @@ Provide instructions on how to get the project up and running on a local machine
 
 Having Node.js installed
 Having NPM
-
 
 ### Installation
 
