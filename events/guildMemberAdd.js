@@ -9,7 +9,9 @@ module.exports = {
                 .setColor('#0099ff')
                 .setTitle('Welcome to Chungus FC!')
                 .setThumbnail('https://api-assets.clashofclans.com/badges/512/CjBdRm0ajZlMZyJy9WuAIgzFc1J37bvpgwguwcxRKbg.png')
-                .setDescription('Hello Clasher! Please use `/clashtag (your tag here)` in the welcome channel to get your roles.');
+                .setDescription('Hello Clasher! Please use `/clashtag (your tag here)` in the welcome channel to get your roles.')
+                .setAuthor('Clash Bot')
+                .setTimestamp(new Date());
     
             // Send the embed as a direct message to the member
             member.send({ embeds: [welcomeEmbed] });

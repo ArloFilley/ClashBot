@@ -4,12 +4,14 @@
   "description": "A clash of clans discord bot for the chungus fc clan",
   "main": "index.js",
   "scripts": {
+    "deploy": "node utils/deploy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "clash-of-clans-node": "^1.1.4",
+    "discord-api-types": "^0.37.66",
     "discord.js": "^14.14.1"
   }
 }
