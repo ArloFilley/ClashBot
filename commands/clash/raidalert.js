@@ -1,8 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { CLASH_TOKEN, CLAN_TAG } = require('../../config/config.json');
-const { readData } = require('../../utils/readdata')
+const { readData } = require('../../utils/readData')
 const cocclient = require('clash-of-clans-node');
-const fs = require('fs');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -25,7 +24,7 @@ module.exports = {
 
             if (raid.state !== 'ongoing') {
                 embed.setTitle('No raids are possible right now').setColor('#FF0000');
-                await interaction.editReply({ content: 'No raids are possible right now', ephemeral: true, embeds: [embed] });
+                await interaction.editReply({ content: 'No raids are possible right now', ephemeral: true });
                 return;
             }
 
@@ -53,17 +52,14 @@ module.exports = {
                 embed.addFields({ name: `${member.nickname}`, value: 'still needs to attack' });
             });
 
-            await interaction.editReply({ embeds: [embed] });
+            await interaction.editReply({ embeds: [ embed ] });
             await interaction.followUp({ content: message });
-        } catch (error) {
-            try {
-                console.error('Error fetching current clan war:', error);
-                // Reply with an error message
-                await interaction.editReply('An error occurred while fetching the current clan war.');
-            } catch (error) {
-                await interaction.reply('An error occurred while fetching the current clan war.');
-            }
-            
+        } catch (err) {
+            console.error('[ERROR]: Clan raid couldn\'t be fetched -> ', err);
+
+            const errorMessage = { content: 'An error occurred while fetching the current clan war.', ephemeral: true }
+            await interaction.reply(errorMessage)
+                .catch(async () => await interaction.editReply(errorMessage));
         }
     },
 };

@@ -1,8 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { CLASH_TOKEN, CLAN_TAG } = require('../../config/config.json');
-const { Roles } = require('../../config/config.json');
-const fs = require('fs');
-const data = require('../../data/users.json')
+const { readData } = require('../../utils/readData')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,12 +12,13 @@ module.exports = {
 
     async execute(interaction) {
         try {
+            const data = await readData();
             let userID = interaction.options.getUser('user').id;
             let discordID = interaction.guild.members.cache.get(userID) || await interaction.guild.members.fetch(userID);
 
             let embed = new EmbedBuilder()
-                    .setTitle(`User - ${discordID.user.globalName}`)
-                    .setColor('#00FF00');
+                .setTitle(`User - ${discordID.user.globalName}`)
+                .setColor('#00FF00');
 
             for (let user of data.users) {
                 if (user.discordId == userID) {
@@ -38,4 +36,3 @@ module.exports = {
         }
     },
 };
-

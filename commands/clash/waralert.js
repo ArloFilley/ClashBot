@@ -1,9 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { CLASH_TOKEN, CLAN_TAG } = require('../../config/config.json');
-const { users } = require('../../data/users.json');
 const { Roles } = require('../../config/config.json');
+const { readData } = require('../../utils/readData');
 const cocclient = require('clash-of-clans-node');
-const fs = require('fs');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,10 +18,8 @@ module.exports = {
             const clanWarRole = interaction.guild.roles.cache.get(Roles.ClanWarRoleID) || await interaction.guild.roles.fetch(Roles.ClanWarRoleID);
 
             // Fetches data about the current war
-            await cocclient.login(CLASH_TOKEN, "Fetching Data From COC API");
+            await cocclient.login(CLASH_TOKEN);
             const currentWar = await cocclient.getClanCurrentWar(CLAN_TAG);
-
-            cocclient.getCapital
 
             // Will execute if there isn't a war in preperation or underway
             if (!(currentWar.state === 'preparation' || currentWar.state === 'inWar')) {
@@ -62,30 +59,22 @@ module.exports = {
             
             await interaction.editReply({ 
                 content: `<@&${Roles.ClanWarRoleID}>`, 
-                embeds: [embed], 
-                allowedMentions: { roles: [ '1184837841029709966' ] } 
+                embeds: [ embed ], 
+                allowedMentions: { roles: [ Roles.ClanWarRoleID ] } 
             });
 
             // Remove all clan war roles from people
             interaction.guild.members.cache.forEach( async (member) => {
-                try {
-                    await member.roles.remove(clanWarRole);
-                } catch (error) {
-                    console.error(`Error removing role from ${member.user.tag}:`, error);
-                }
+                await member.roles.remove(clanWarRole)
+                    .catch(err => console.error(`[Error]: removing role from ${member.user.tag} -> `, err));
             })
 
             // Reassign clan war role based on those who are in the clan war
             await Promise.all(membersToAddRole.map(member => member.roles.add(clanWarRole)));
-        } catch (error) {
-            try {
-                console.error('Error fetching current clan war:', error);
-                // Reply with an error message
-                await interaction.editreply('An error occurred while fetching the current clan war.');
-            } catch (error) {
-                await interaction.reply('An error occurred while fetching the current clan war.');
-            }
-            
+        } catch (err) {
+            console.error('[Error]: fetching current clan war:', error);
+            await interaction.reply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true })
+                .catch(async () => await interaction.editreply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true }))  
         }
     },
 };
@@ -114,31 +103,4 @@ function convertTime(DateString) {
         month: '2-digit',
         year: 'numeric',
     });
-}
-
-async function readData() {
-    // Specify the file path
-    const filePath = './data/userMap.json';
-
-    try {
-        // Read the JSON file
-        const data = await fs.promises.readFile(filePath, 'utf8');
-
-        // Parse the JSON data
-        const jsonData = JSON.parse(data);
-
-        // Access the user data
-        const userData = jsonData.user_data;
-
-        // Return the data to be processed
-        return userData;
-    } catch (error) {
-        console.error('Error reading or parsing the file:', error);
-        return null;
-    }
-}
-
-function createWarEmbed(currentWar) {
-
-    
 }
