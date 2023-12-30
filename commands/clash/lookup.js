@@ -31,8 +31,8 @@ module.exports = {
 
             await interaction.reply({ embeds: [embed] });        
         } catch (error) {
-            console.error('Error:', error);
-            await interaction.reply(`An error occurred while processing the Clash Tag.`);
+            console.error('[ERROR]:', error);
+            await interaction.reply({ content: `An error occurred while processing the Clash Tag.`, ephemeral: true });
         }
     },
 };

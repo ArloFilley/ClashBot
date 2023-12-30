@@ -72,7 +72,7 @@ module.exports = {
             // Reassign clan war role based on those who are in the clan war
             await Promise.all(membersToAddRole.map(member => member.roles.add(clanWarRole)));
         } catch (err) {
-            console.error('[Error]: fetching current clan war:', error);
+            console.error('[Error]: fetching current clan war -> ', error);
             await interaction.reply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true })
                 .catch(async () => await interaction.editreply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true }))  
         }

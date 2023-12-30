@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const { CLASH_TOKEN, CLAN_TAG } = require('../../config/config.json');
 const { Roles } = require('../../config/config.json');
 const fs = require('fs');
+const { addUser } = require('../../utils/readData');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -95,6 +96,8 @@ module.exports = {
                 fs.writeFileSync('./data/users.json', JSON.stringify(users, null, 2));
             }
 
+            addUser(player.tag, userID);
+
             // Role assignment based on the player's role in the clan
             switch (player.role) {
                 case 'leader':
@@ -117,8 +120,8 @@ module.exports = {
 
             
         } catch (error) {
-            console.error('Error:', error);
-            await interaction.reply(`An error occurred while processing the Clash Tag.`);
+            console.error('[ERROR]:', error);
+            await interaction.reply({ content: `An error occurred while processing the Clash Tag.`, ephemeral: true });
         }
     },
 };

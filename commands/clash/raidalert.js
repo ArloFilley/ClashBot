@@ -57,9 +57,8 @@ module.exports = {
         } catch (err) {
             console.error('[ERROR]: Clan raid couldn\'t be fetched -> ', err);
 
-            const errorMessage = { content: 'An error occurred while fetching the current clan war.', ephemeral: true }
-            await interaction.reply(errorMessage)
-                .catch(async () => await interaction.editReply(errorMessage));
+            await interaction.reply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true })
+                .catch(async () => await interaction.editReply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true }));
         }
     },
 };
