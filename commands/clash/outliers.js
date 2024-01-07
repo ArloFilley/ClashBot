@@ -26,9 +26,10 @@ module.exports = {
                 }
             }
 
-            await interaction.reply({ embeds: [embed] });        
+            await interaction.reply({ embeds: [embed] });  
+            console.log('[Success]: Clan sucessfully alerted of outliers')      
         } catch (error) {
-            console.error('[ERROR]:', error);
+            console.error('[Error]:', error);
             await interaction.reply({ content: `An error occurred while processing outliers. If this error please contact the administrator`, ephemeral: true });
         }
     },

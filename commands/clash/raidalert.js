@@ -54,8 +54,9 @@ module.exports = {
 
             await interaction.editReply({ embeds: [ embed ] });
             await interaction.followUp({ content: message });
+            console.log('[Success]: Alerted members of a raid')
         } catch (err) {
-            console.error('[ERROR]: Clan raid couldn\'t be fetched -> ', err);
+            console.error('[Error]: Clan raid couldn\'t be fetched -> ', err);
 
             await interaction.reply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true })
                 .catch(async () => await interaction.editReply({ content: 'An error occurred while fetching the current clan war.', ephemeral: true }));

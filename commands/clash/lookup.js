@@ -25,13 +25,14 @@ module.exports = {
                     for (let i in user.clashTags) {
                         let j = Number(i) + 1;
                         embed.addFields({ name: `Account ${j}`, value: `${user.clashUsernames[i]} - ${user.clashTags[i]}` })
+                        console.log(`[Success]: ${interation.user.globalName} looked up -> ${user.clashUsernames[i]}`);
                     }
                 } 
             }
 
-            await interaction.reply({ embeds: [embed] });        
+            await interaction.reply({ embeds: [embed] });  
         } catch (error) {
-            console.error('[ERROR]:', error);
+            console.error('[Error]:', error);
             await interaction.reply({ content: `An error occurred while processing the Clash Tag.`, ephemeral: true });
         }
     },
